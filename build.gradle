@@ -1,0 +1,29 @@
+buildscript {
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE')
+    }
+
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter")
+}
+
+jar {
+    baseName = 'simple-telegram-bot'
+}
+
+bootRepackage {
+    mainClass = 'cdv.gv.webapp.Bootstrap'
+}
