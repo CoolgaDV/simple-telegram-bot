@@ -18,6 +18,7 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter")
+    compile("org.springframework:spring-web")
 }
 
 jar {

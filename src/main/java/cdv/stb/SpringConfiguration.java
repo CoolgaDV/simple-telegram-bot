@@ -22,4 +22,9 @@ public class SpringConfiguration {
         return new MessageListenerActivator(getMessageListenerTask());
     }
 
+    @Bean
+    public TelegramApiClient getTelegramApiClient() {
+        return new TelegramApiClient("");
+    }
+
 }
