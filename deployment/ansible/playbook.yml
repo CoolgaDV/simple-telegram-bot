@@ -1,0 +1,29 @@
+---
+
+- hosts: server
+
+  tasks:
+
+    - name: include variables from external file
+      include_vars: variables.yml
+
+    - name: remove previous setup
+      file: path={{ remote_path }} state=absent
+
+    - name: create application directory
+      file: path={{ remote_path }} state=directory
+
+    - name: copy scripts
+      copy:
+        src: ../bin
+        dest: "{{ remote_path }}"
+
+    - name: copy application
+      copy:
+        src: ../../build/libs/simple-telegram-bot.jar
+        dest: "{{ remote_path }}/bin/simple-telegram-bot.jar"
+
+    - name: copy configuration
+      copy:
+        src: ../config
+        dest: "{{ remote_path }}"
