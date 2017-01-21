@@ -1,7 +1,9 @@
 package cdv.stb;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Spring context configuration
@@ -10,11 +12,19 @@ import org.springframework.context.annotation.Configuration;
  *         14.01.2017 11:08
  */
 @Configuration
+@Import(ApplicationSettings.class)
 public class SpringConfiguration {
+
+    @Autowired
+    private ApplicationSettings applicationSettings;
 
     @Bean
     public MessageListenerTask getMessageListenerTask() {
-        return new MessageListenerTask();
+        return new MessageListenerTask(
+                getTelegramApiClient(),
+                applicationSettings.getNetworkFailurePauseMinutes(),
+                applicationSettings.getRequestFailureThreshold(),
+                applicationSettings.getPollingTimeoutSeconds());
     }
 
     @Bean
@@ -24,7 +34,7 @@ public class SpringConfiguration {
 
     @Bean
     public TelegramApiClient getTelegramApiClient() {
-        return new TelegramApiClient("");
+        return new TelegramApiClient(applicationSettings.getBotToken());
     }
 
 }
