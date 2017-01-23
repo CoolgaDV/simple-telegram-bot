@@ -3,10 +3,9 @@ package cdv.stb;
 import cdv.stb.exception.NetworkException;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author Dmitry Coolga
@@ -23,29 +22,27 @@ public class TelegramApiClient {
     }
 
     public String getUpdates(int timeout, long offset) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("timeout", String.valueOf(timeout));
-        parameters.put("offset", String.valueOf(offset));
-        return sendRequest("getUpdates", parameters);
+        return sendRequest("getUpdates", url -> {
+            url.queryParam("timeout", String.valueOf(timeout));
+            url.queryParam("offset", String.valueOf(offset));
+        });
     }
 
     public String sendMessage(String message, long chatId) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("chat_id", String.valueOf(chatId));
-        parameters.put("text", message);
-        return sendRequest("sendMessage", parameters);
+        return sendRequest("sendMessage", url -> {
+                url.queryParam("chat_id", String.valueOf(chatId));
+                url.queryParam("text", message);
+        });
     }
 
-    private String sendRequest(String method, Map<String, String> queryParameters) {
+    private String sendRequest(String method, Consumer<UriComponentsBuilder> urlCustomizer) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            ResponseEntity<String> response = rest.exchange(
-                    "https://api.telegram.org/bot" + token + "/" + method,
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    String.class,
-                    queryParameters);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                    "https://api.telegram.org/bot" + token + "/" + method);
+            urlCustomizer.accept(builder);
+            ResponseEntity<String> response = rest.getForEntity(
+                    builder.build().encode().toUri(),
+                    String.class);
             return response.getBody();
         } catch (Exception ex) {
             throw new NetworkException(method, ex);

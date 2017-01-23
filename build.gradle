@@ -28,5 +28,5 @@ jar {
 }
 
 bootRepackage {
-    mainClass = 'cdv.gv.webapp.Bootstrap'
+    mainClass = 'cdv.stb.Bootstrap'
 }

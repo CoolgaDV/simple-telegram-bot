@@ -10,7 +10,7 @@
     - name: remove previous setup
       file: path={{ remote_path }} state=absent
 
-    - name: create application directory
+    - name: create root directory
       file: path={{ remote_path }} state=directory
 
     - name: copy scripts
@@ -23,7 +23,32 @@
         src: ../../build/libs/simple-telegram-bot.jar
         dest: "{{ remote_path }}/bin/simple-telegram-bot.jar"
 
-    - name: copy configuration
+    - name: create configuration directory
+      file:
+        path: "{{ remote_path }}/config"
+        state: directory
+
+    - name: copy logging configuration
       copy:
-        src: ../config
-        dest: "{{ remote_path }}"
+        src: ../config/logback.xml
+        dest: "{{ remote_path }}/config/logback.xml"
+
+    - name: combine and copy application configuration
+      template:
+        src: ../config/application.yml
+        dest: "{{ remote_path }}/config/application.yml"
+
+    - name: make start and shutdown scripts executable
+      file:
+        path: "{{ remote_path }}/bin/{{ item }}"
+        mode: 0544
+      with_items:
+        - start.sh
+        - stop.sh
+
+    - name: start application
+      shell: ./start.sh
+      args:
+        chdir: "{{ remote_path }}/bin/"
+      environment:
+        JAVA_HOME: "{{ java_home }}"

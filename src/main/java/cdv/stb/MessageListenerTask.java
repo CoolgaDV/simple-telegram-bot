@@ -6,6 +6,7 @@ import cdv.stb.exception.RequestFailureException;
 import cdv.stb.protocol.Message;
 import cdv.stb.protocol.Response;
 import cdv.stb.protocol.Result;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class MessageListenerTask {
         this.networkFailurePauseMinutes = networkFailurePauseMinutes;
         this.requestFailureThreshold = requestFailureThreshold;
         this.pollingTimeoutSeconds = pollingTimeoutSeconds;
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Async
@@ -60,7 +62,7 @@ public class MessageListenerTask {
                 failureCounter = 0;
             } catch (NetworkException ex) {
                 log.warn("Network failure. Next attempt will be made in {} minutes", 
-                        networkFailurePauseMinutes);
+                        networkFailurePauseMinutes, ex);
                 try {
                     TimeUnit.MINUTES.sleep(networkFailurePauseMinutes);
                 } catch (InterruptedException innerEx) {
