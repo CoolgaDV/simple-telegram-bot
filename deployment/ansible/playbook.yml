@@ -7,6 +7,9 @@
     - name: include variables from external file
       include_vars: variables.yml
 
+    - name: stop application
+      script: ../bin/stop.sh
+
     - name: remove previous setup
       file: path={{ remote_path }} state=absent
 

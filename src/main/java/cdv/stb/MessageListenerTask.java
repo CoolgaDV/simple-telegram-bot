@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,12 +33,15 @@ public class MessageListenerTask {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final AtomicLong updateCounter = new AtomicLong(0);
+    private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
     private final TelegramApiClient apiClient;
 
     private final int networkFailurePauseMinutes;
     private final int requestFailureThreshold;
     private final int pollingTimeoutSeconds;
+
+    private volatile boolean active = true;
 
     public MessageListenerTask(TelegramApiClient apiClient,
                                int networkFailurePauseMinutes,
@@ -49,14 +54,21 @@ public class MessageListenerTask {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    @PreDestroy
+    public void shutdown() throws InterruptedException {
+        log.info("Shutting down listener task...");
+        active = false;
+        shutdownLatch.await();
+    }
+
     @Async
     public void start() {
-        log.info("Listener thread started");
+        log.info("Listener task started");
         if ( ! skipStaleUpdates()) {
             return;
         }
         int failureCounter = 0;
-        while (true) {
+        while (active) {
             try {
                 listen();
                 failureCounter = 0;
@@ -83,6 +95,8 @@ public class MessageListenerTask {
                 return;
             }
         }
+        log.info("Listener task is shutdown");
+        shutdownLatch.countDown();
     }
 
     private boolean skipStaleUpdates() {
