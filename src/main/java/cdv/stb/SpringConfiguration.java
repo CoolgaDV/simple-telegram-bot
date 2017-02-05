@@ -1,5 +1,6 @@
 package cdv.stb;
 
+import cdv.stb.rates.CurrencyRateSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,11 @@ public class SpringConfiguration {
     @Bean
     public MessageListenerActivator getMessageListenerActivator() {
         return new MessageListenerActivator(getMessageListenerTask());
+    }
+
+    @Bean
+    public CurrencyRateSource getCurrencyRateSource() {
+        return new CurrencyRateSource();
     }
 
     @Bean
