@@ -1,6 +1,7 @@
 package cdv.stb;
 
 import cdv.stb.rates.CurrencyRateSource;
+import cdv.stb.rates.CurrencyRatesTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,9 @@ public class SpringConfiguration {
                 getTelegramApiClient(),
                 applicationSettings.getNetworkFailurePauseMinutes(),
                 applicationSettings.getRequestFailureThreshold(),
-                applicationSettings.getPollingTimeoutSeconds());
+                applicationSettings.getPollingTimeoutSeconds(),
+                getRememberTrigger(),
+                getCurrencyRatesTrigger());
     }
 
     @Bean
@@ -41,6 +44,16 @@ public class SpringConfiguration {
     @Bean
     public TelegramApiClient getTelegramApiClient() {
         return new TelegramApiClient(applicationSettings.getBotToken());
+    }
+
+    @Bean
+    public RememberTrigger getRememberTrigger() {
+        return new RememberTrigger(getTelegramApiClient());
+    }
+
+    @Bean
+    public CurrencyRatesTrigger getCurrencyRatesTrigger() {
+        return new CurrencyRatesTrigger(getCurrencyRateSource(), getTelegramApiClient());
     }
 
 }

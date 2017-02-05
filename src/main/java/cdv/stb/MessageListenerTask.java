@@ -35,6 +35,7 @@ public class MessageListenerTask {
     private final AtomicLong updateCounter = new AtomicLong(0);
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
+    private final Trigger[] triggers;
     private final TelegramApiClient apiClient;
 
     private final int networkFailurePauseMinutes;
@@ -46,11 +47,13 @@ public class MessageListenerTask {
     public MessageListenerTask(TelegramApiClient apiClient,
                                int networkFailurePauseMinutes,
                                int requestFailureThreshold,
-                               int pollingTimeoutSeconds) {
+                               int pollingTimeoutSeconds,
+                               Trigger... triggers) {
         this.apiClient = apiClient;
         this.networkFailurePauseMinutes = networkFailurePauseMinutes;
         this.requestFailureThreshold = requestFailureThreshold;
         this.pollingTimeoutSeconds = pollingTimeoutSeconds;
+        this.triggers = triggers;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -134,13 +137,11 @@ public class MessageListenerTask {
                     text,
                     message.getFrom().getUserName(),
                     message.getChat().getId());
-            if (text == null || ! text.startsWith("Помнишь")) {
-                continue;
+            for (Trigger trigger : triggers) {
+                if (trigger.match(message)) {
+                    trigger.fire(message);
+                }
             }
-            String output = apiClient.sendMessage(
-                    "Помню !",
-                    message.getChat().getId());
-            log.info("Response sent. Result: {}", output);
         }
     }
 

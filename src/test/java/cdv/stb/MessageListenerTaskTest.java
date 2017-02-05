@@ -65,7 +65,7 @@ public class MessageListenerTaskTest {
     }
 
     @Test
-    public void testNonMatchedMessage() {
+    public void testTriggers() {
 
         Response response = new Response(
                 true,
@@ -76,28 +76,19 @@ public class MessageListenerTaskTest {
                 .thenReturn(serialize(response))
                 .thenThrow(terminate());
 
-        startTask();
+        Trigger unmatchedTrigger = mock(Trigger.class);
+        when(unmatchedTrigger.match(any())).thenReturn(false);
+
+        Trigger matchedTrigger = mock(Trigger.class);
+        when(matchedTrigger.match(any())).thenReturn(true);
+
+        startTask(unmatchedTrigger, matchedTrigger);
 
         verify(clientMock, times(3)).getUpdates(anyInt(), anyLong());
-        verify(clientMock, never()).sendMessage(any(), anyLong());
-    }
-
-    @Test
-    public void testMatchedMessage() {
-
-        Response response = new Response(
-                true,
-                Collections.singletonList(createResult(100, "Помнишь ")));
-
-        when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(response))
-                .thenThrow(terminate());
-
-        startTask();
-
-        verify(clientMock, times(3)).getUpdates(anyInt(), anyLong());
-        verify(clientMock).sendMessage("Помню !", CHAT_ID);
+        verify(unmatchedTrigger).match(any());
+        verify(unmatchedTrigger, never()).fire(any());
+        verify(matchedTrigger).match(any());
+        verify(matchedTrigger).fire(any());
     }
 
     @Test
@@ -150,15 +141,6 @@ public class MessageListenerTaskTest {
         verify(clientMock, times(2)).getUpdates(anyInt(), anyLong());
     }
 
-    private Result createResult(long updateId, String text) {
-        return new Result(updateId, new Message(
-                1,
-                new From(1, "", "", ""),
-                new Chat(CHAT_ID, "", "", "", ""),
-                1,
-                text));
-    }
-
     @Test
     public void testNoStaleUpdates() {
 
@@ -203,8 +185,8 @@ public class MessageListenerTaskTest {
                 offsetCaptor.capture());
     }
 
-    private void startTask() {
-        new MessageListenerTask(clientMock, 1, 2, 5).start();
+    private void startTask(Trigger... triggers) {
+        new MessageListenerTask(clientMock, 1, 2, 5, triggers).start();
     }
 
     private String serialize(Response response) {
@@ -217,6 +199,15 @@ public class MessageListenerTaskTest {
 
     private RuntimeException terminate() {
         return new RuntimeException("Termination");
+    }
+
+    private Result createResult(long updateId, String text) {
+        return new Result(updateId, new Message(
+                1,
+                new From(1, "", "", ""),
+                new Chat(CHAT_ID, "", "", "", ""),
+                1,
+                text));
     }
 
 }
