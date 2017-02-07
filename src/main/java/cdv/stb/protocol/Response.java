@@ -29,4 +29,12 @@ public class Response {
         return results;
     }
 
+    @Override
+    public String toString() {
+        return "Response{" +
+                "succeeded=" + succeeded +
+                ", results=" + results +
+                '}';
+    }
+
 }

@@ -1,10 +1,16 @@
 package cdv.stb;
 
+import cdv.stb.exception.MessageFormatException;
 import cdv.stb.exception.NetworkException;
+import cdv.stb.exception.RequestFailureException;
+import cdv.stb.protocol.Response;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
@@ -13,19 +19,21 @@ import java.util.function.Consumer;
  */
 public class TelegramApiClient {
 
+    private final ObjectMapper mapper = new ObjectMapper();
     private final RestTemplate rest = new RestTemplate();
 
     private final String token;
 
     public TelegramApiClient(String token) {
         this.token = token;
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public String getUpdates(int timeout, long offset) {
-        return sendRequest("getUpdates", url -> {
+    public Response getUpdates(int timeout, long offset) {
+        return parseResponse(sendRequest("getUpdates", url -> {
             url.queryParam("timeout", String.valueOf(timeout));
             url.queryParam("offset", String.valueOf(offset));
-        });
+        }));
     }
 
     public String sendMessage(String message, long chatId) {
@@ -47,6 +55,19 @@ public class TelegramApiClient {
         } catch (Exception ex) {
             throw new NetworkException(method, ex);
         }
+    }
+
+    private Response parseResponse(String source) {
+        Response response;
+        try {
+            response = mapper.readValue(source, Response.class);
+        } catch (IOException ex) {
+            throw new MessageFormatException(source, ex);
+        }
+        if ( ! response.isSucceeded()) {
+            throw new RequestFailureException(source);
+        }
+        return response;
     }
 
 }

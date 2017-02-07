@@ -41,4 +41,14 @@ public class From {
         return userName;
     }
 
+    @Override
+    public String toString() {
+        return "From{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
+
 }

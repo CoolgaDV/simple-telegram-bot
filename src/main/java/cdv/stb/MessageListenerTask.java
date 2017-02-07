@@ -6,15 +6,12 @@ import cdv.stb.exception.RequestFailureException;
 import cdv.stb.protocol.Message;
 import cdv.stb.protocol.Response;
 import cdv.stb.protocol.Result;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +28,6 @@ public class MessageListenerTask {
 
     private static final Logger log = LoggerFactory.getLogger(MessageListenerTask.class);
 
-    private final ObjectMapper mapper = new ObjectMapper();
     private final AtomicLong updateCounter = new AtomicLong(0);
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
@@ -54,7 +50,7 @@ public class MessageListenerTask {
         this.requestFailureThreshold = requestFailureThreshold;
         this.pollingTimeoutSeconds = pollingTimeoutSeconds;
         this.triggers = triggers;
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     }
 
     @PreDestroy
@@ -104,8 +100,7 @@ public class MessageListenerTask {
 
     private boolean skipStaleUpdates() {
         try {
-            String response = apiClient.getUpdates(0, 0);
-            List<Result> updates = parseResponse(response).getResults();
+            List<Result> updates = apiClient.getUpdates(0, 0).getResults();
             log.info("Read stale updates: {}", updates.size());
             updateCounter.set(updates.stream()
                     .mapToLong(Result::getUpdateId)
@@ -118,10 +113,9 @@ public class MessageListenerTask {
     }
 
     private void listen() {
-        String updates = apiClient.getUpdates(
+        Response response = apiClient.getUpdates(
                 pollingTimeoutSeconds,
                 updateCounter.get() + 1);
-        Response response = parseResponse(updates);
         for (Result result : response.getResults()) {
             long updateId = result.getUpdateId();
             if (updateCounter.get() < updateId) {
@@ -129,7 +123,7 @@ public class MessageListenerTask {
             }
             Message message = result.getMessage();
             if (message == null) {
-                log.warn("One of received updates has no message: " + updates);
+                log.warn("One of received updates has no message: {}", response);
                 return;
             }
             String text = message.getText();
@@ -144,20 +138,6 @@ public class MessageListenerTask {
             }
         }
     }
-
-    private Response parseResponse(String source) {
-        Response response;
-        try {
-            response = mapper.readValue(source, Response.class);
-        } catch (IOException ex) {
-            throw new MessageFormatException(source, ex);
-        }
-        if ( ! response.isSucceeded()) {
-            throw new RequestFailureException(source);
-        }
-        return response;
-    }
-
     
     private void fatal(String message, Object... args) {
         Object[] logArgs = new Object[args.length + 1];

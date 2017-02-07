@@ -27,4 +27,12 @@ public class Result {
         return message;
     }
 
+    @Override
+    public String toString() {
+        return "Result{" +
+                "updateId=" + updateId +
+                ", message=" + message +
+                '}';
+    }
+
 }

@@ -1,8 +1,7 @@
 package cdv.stb;
 
+import cdv.stb.exception.RequestFailureException;
 import cdv.stb.protocol.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -26,8 +25,6 @@ public class MessageListenerTaskTest {
 
     private static final long CHAT_ID = 1L;
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private final TelegramApiClient clientMock = mock(TelegramApiClient.class);
 
     private final ArgumentCaptor<Integer> timeoutCaptor =
@@ -46,10 +43,10 @@ public class MessageListenerTaskTest {
                 Collections.singletonList(createResult(110, "")));
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(first))
-                .thenReturn(serialize(second))
-                .thenReturn(serialize(third))
+                .thenReturn(new Response(true, new ArrayList<>()))
+                .thenReturn(first)
+                .thenReturn(second)
+                .thenReturn(third)
                 .thenThrow(terminate());
 
         startTask();
@@ -72,8 +69,8 @@ public class MessageListenerTaskTest {
                 Collections.singletonList(createResult(100, "foo")));
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(response))
+                .thenReturn(new Response(true, new ArrayList<>()))
+                .thenReturn(response)
                 .thenThrow(terminate());
 
         Trigger unmatchedTrigger = mock(Trigger.class);
@@ -95,8 +92,8 @@ public class MessageListenerTaskTest {
     public void testRequestFailure() {
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(new Response(false, new ArrayList<>())));
+                .thenReturn(new Response(true, new ArrayList<>()))
+                .thenThrow(new RequestFailureException(""));
 
         startTask();
 
@@ -107,10 +104,10 @@ public class MessageListenerTaskTest {
     public void testRequestFailureRecovery() {
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(new Response(false, new ArrayList<>())))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn(serialize(new Response(false, new ArrayList<>())));
+                .thenReturn(new Response(true, new ArrayList<>()))
+                .thenThrow(new RequestFailureException(""))
+                .thenReturn(new Response(true, new ArrayList<>()))
+                .thenThrow(new RequestFailureException(""));
 
         startTask();
 
@@ -118,22 +115,10 @@ public class MessageListenerTaskTest {
     }
 
     @Test
-    public void testMessageFormatException() {
-
-        when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
-                .thenReturn("foo");
-
-        startTask();
-
-        verify(clientMock, times(2)).getUpdates(anyInt(), anyLong());
-    }
-
-    @Test
     public void testUnexpectedException() {
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(new Response(true, new ArrayList<>())))
+                .thenReturn(new Response(true, new ArrayList<>()))
                 .thenThrow(terminate());
 
         startTask();
@@ -175,7 +160,7 @@ public class MessageListenerTaskTest {
     private void run(Response response, int updatesCall) {
 
         when(clientMock.getUpdates(anyInt(), anyInt()))
-                .thenReturn(serialize(response))
+                .thenReturn(response)
                 .thenThrow(terminate());
 
         startTask();
@@ -187,14 +172,6 @@ public class MessageListenerTaskTest {
 
     private void startTask(Trigger... triggers) {
         new MessageListenerTask(clientMock, 1, 2, 5, triggers).start();
-    }
-
-    private String serialize(Response response) {
-        try {
-            return mapper.writeValueAsString(response);
-        } catch (JsonProcessingException ex) {
-            throw new RuntimeException("Error while serializing response", ex);
-        }
     }
 
     private RuntimeException terminate() {

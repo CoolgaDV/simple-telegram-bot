@@ -48,4 +48,15 @@ public class Message {
         return text;
     }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "messageId=" + messageId +
+                ", from=" + from +
+                ", chat=" + chat +
+                ", date=" + date +
+                ", text='" + text + '\'' +
+                '}';
+    }
+
 }
