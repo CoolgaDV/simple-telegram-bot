@@ -10,11 +10,20 @@
     - name: stop application
       script: ../bin/stop.sh
 
-    - name: remove previous setup
-      file: path={{ remote_path }} state=absent
-
-    - name: create root directory
+    - name: ensure root directory exists
       file: path={{ remote_path }} state=directory
+
+    - name: install java
+      script: install_java.sh {{ remote_path }}
+
+    - name: remove 'bin' directory from previous setup
+      file: path="{{ remote_path }}/bin" state=absent
+
+    - name: remove 'config' directory from previous setup
+      file: path="{{ remote_path }}/config" state=absent
+
+    - name: remove 'logs' directory from previous setup
+      file: path="{{ remote_path }}/logs" state=absent
 
     - name: copy scripts
       copy:
@@ -50,8 +59,8 @@
         - stop.sh
 
     - name: start application
-      shell: ./start.sh
+      shell: ./start.sh > start.log
       args:
         chdir: "{{ remote_path }}/bin/"
       environment:
-        JAVA_HOME: "{{ java_home }}"
+        JAVA_HOME: "{{ remote_path }}/java"
