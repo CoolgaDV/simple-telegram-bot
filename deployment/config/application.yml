@@ -2,7 +2,7 @@
 
 app:
   bot.token: {{ bot_token }}
-  polling.timeout.seconds: {{ polling_timeout_seconds }}
-  network.failure.pause.minutes: {{ network_failure_pause_minutes }}
-  request.failure.threshold: {{ request_failure_threshold }}
-  rates.refresh.cron: {{ rates_refresh_cron }}
+  polling.timeout.seconds: 10
+  network.failure.pause.minutes: 5
+  request.failure.threshold: 3
+  rates.refresh.cron: 0 0 * * * *

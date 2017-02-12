@@ -16,6 +16,9 @@
     - name: install java
       script: install_java.sh {{ remote_path }}
 
+    - name: install redis
+      script: install_redis.sh {{ remote_path }}
+
     - name: remove 'bin' directory from previous setup
       file: path="{{ remote_path }}/bin" state=absent
 
@@ -45,10 +48,18 @@
         src: ../config/logback.xml
         dest: "{{ remote_path }}/config/logback.xml"
 
-    - name: combine and copy application configuration
+    - name: resolve and copy application configuration
       template:
         src: ../config/application.yml
         dest: "{{ remote_path }}/config/application.yml"
+
+    - name: copy redis configuration
+      copy:
+        src: ../config/redis.conf
+        dest: "{{ remote_path }}/config/redis.conf"
+
+    - name: restart redis
+      script: restart_redis.sh {{ remote_path }}
 
     - name: make start and shutdown scripts executable
       file:

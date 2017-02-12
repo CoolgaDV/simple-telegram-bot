@@ -2,7 +2,9 @@
 
 cd $1
 
-if [ -d java ]; then
+java_directory=java
+
+if [ -d ${java_directory} ]; then
     exit 0;
 fi
 
@@ -13,7 +15,6 @@ wget --no-check-certificate --no-cookies --header \
      http://download.oracle.com/otn-pub/java/jdk/8u112-b15/${archive_name}
 
 tar -xzf ${archive_name}
-
 rm ${archive_name}
 
-mv jdk1.8.0_112 java
+mv jdk1.8.0_112 ${java_directory}
