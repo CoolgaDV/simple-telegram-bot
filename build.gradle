@@ -19,6 +19,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework:spring-web")
+    compile("org.springframework.boot:spring-boot-starter-data-redis")
     compile("com.fasterxml.jackson.core:jackson-databind")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

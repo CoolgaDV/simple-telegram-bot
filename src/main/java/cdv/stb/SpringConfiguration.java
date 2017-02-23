@@ -6,6 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * Spring context configuration
@@ -28,7 +33,8 @@ public class SpringConfiguration {
                 applicationSettings.getRequestFailureThreshold(),
                 applicationSettings.getPollingTimeoutSeconds(),
                 getRememberTrigger(),
-                getCurrencyRatesTrigger());
+                getCurrencyRatesTrigger(),
+                getSubscriptionTrigger());
     }
 
     @Bean
@@ -54,6 +60,37 @@ public class SpringConfiguration {
     @Bean
     public CurrencyRatesTrigger getCurrencyRatesTrigger() {
         return new CurrencyRatesTrigger(getCurrencyRateSource(), getTelegramApiClient());
+    }
+
+    @Bean
+    public RedisConnectionFactory getRedisConnectionFactory() {
+        JedisConnectionFactory factory = new JedisConnectionFactory();
+        factory.setHostName(applicationSettings.getRedisHost());
+        factory.setPort(applicationSettings.getRedisPort());
+        factory.setDatabase(applicationSettings.getRedisDbIndex());
+        return factory;
+    }
+
+    @Bean
+    public RedisTemplate<String, Long> getRedisTemplate() {
+        RedisSerializer<String> serializer = new StringRedisSerializer();
+        RedisTemplate<String, Long> template = new RedisTemplate<>();
+        template.setConnectionFactory(getRedisConnectionFactory());
+        template.setKeySerializer(serializer);
+        template.setHashKeySerializer(serializer);
+        return template;
+    }
+
+    @Bean
+    public SubscriptionManager getSubscriptionManager() {
+        return new SubscriptionManager(
+                getRedisTemplate(),
+                getCurrencyRatesTrigger());
+    }
+
+    @Bean
+    public SubscriptionTrigger getSubscriptionTrigger() {
+        return new SubscriptionTrigger(getTelegramApiClient(), getSubscriptionManager());
     }
 
 }

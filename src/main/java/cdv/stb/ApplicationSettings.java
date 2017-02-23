@@ -22,6 +22,15 @@ public class ApplicationSettings {
     @Value("${app.request.failure.threshold}")
     private int requestFailureThreshold;
 
+    @Value("${app.redis.host}")
+    private String redisHost;
+
+    @Value("${app.redis.port}")
+    private int redisPort;
+
+    @Value("${app.redis.db.index}")
+    private int redisDbIndex;
+
     public String getBotToken() {
         return botToken;
     }
@@ -36,6 +45,18 @@ public class ApplicationSettings {
 
     public int getRequestFailureThreshold() {
         return requestFailureThreshold;
+    }
+
+    public String getRedisHost() {
+        return redisHost;
+    }
+
+    public int getRedisPort() {
+        return redisPort;
+    }
+
+    public int getRedisDbIndex() {
+        return redisDbIndex;
     }
 
 }

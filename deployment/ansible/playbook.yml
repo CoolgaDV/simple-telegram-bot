@@ -39,9 +39,10 @@
         dest: "{{ remote_path }}/bin/simple-telegram-bot.jar"
 
     - name: create configuration directory
-      file:
-        path: "{{ remote_path }}/config"
-        state: directory
+      file: path="{{ remote_path }}/config" state=directory
+
+    - name: create redis data directory
+      file: path="{{ remote_path }}/redis-data" state=directory
 
     - name: copy logging configuration
       copy:
@@ -53,8 +54,8 @@
         src: ../config/application.yml
         dest: "{{ remote_path }}/config/application.yml"
 
-    - name: copy redis configuration
-      copy:
+    - name: resolve and copy redis configuration
+      template:
         src: ../config/redis.conf
         dest: "{{ remote_path }}/config/redis.conf"
 
