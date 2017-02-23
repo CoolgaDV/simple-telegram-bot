@@ -1,24 +1,24 @@
 package cdv.stb.rates;
 
 import cdv.stb.telegram.TelegramApiClient;
-import cdv.stb.common.Trigger;
-import cdv.stb.common.TriggerWithSubscription;
+import cdv.stb.common.MessageHandler;
+import cdv.stb.common.SubscriptionHandler;
 import cdv.stb.telegram.protocol.Message;
 
 import java.util.List;
 
 /**
- * Trigger that provides currency rates data.
+ * Handler that provides currency rates data.
  *
  * @author Dmitry Coolga
  *         05.02.2017 11:08
  */
-public class CurrencyRatesTrigger implements Trigger, TriggerWithSubscription {
+public class CurrencyRatesHandler implements MessageHandler, SubscriptionHandler {
 
     private final CurrencyRateSource currencyRateSource;
     private final TelegramApiClient apiClient;
 
-    public CurrencyRatesTrigger(CurrencyRateSource currencyRateSource,
+    public CurrencyRatesHandler(CurrencyRateSource currencyRateSource,
                                 TelegramApiClient apiClient) {
         this.currencyRateSource = currencyRateSource;
         this.apiClient = apiClient;
@@ -30,12 +30,12 @@ public class CurrencyRatesTrigger implements Trigger, TriggerWithSubscription {
     }
 
     @Override
-    public void fire(Message message) {
+    public void handle(Message message) {
         sendCurrenciesMessage(message.getChat().getId());
     }
 
     @Override
-    public void handleSubscriptionDelivery(long chatId) {
+    public void handleSubscription(long chatId) {
         sendCurrenciesMessage(chatId);
     }
 

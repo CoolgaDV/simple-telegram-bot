@@ -1,10 +1,10 @@
 package cdv.stb.core;
 
-import cdv.stb.plain.RememberTrigger;
+import cdv.stb.plain.RememberHandler;
 import cdv.stb.rates.CurrencyRateSource;
-import cdv.stb.rates.CurrencyRatesTrigger;
+import cdv.stb.rates.CurrencyRatesHandler;
 import cdv.stb.subscription.SubscriptionManager;
-import cdv.stb.subscription.SubscriptionTrigger;
+import cdv.stb.subscription.SubscriptionHandler;
 import cdv.stb.telegram.TelegramApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,9 +36,9 @@ public class SpringConfiguration {
                 applicationSettings.getNetworkFailurePauseMinutes(),
                 applicationSettings.getRequestFailureThreshold(),
                 applicationSettings.getPollingTimeoutSeconds(),
-                getRememberTrigger(),
-                getCurrencyRatesTrigger(),
-                getSubscriptionTrigger());
+                getRememberHandler(),
+                getCurrencyRatesHandler(),
+                getSubscriptionHandler());
     }
 
     @Bean
@@ -57,13 +57,13 @@ public class SpringConfiguration {
     }
 
     @Bean
-    public RememberTrigger getRememberTrigger() {
-        return new RememberTrigger(getTelegramApiClient());
+    public RememberHandler getRememberHandler() {
+        return new RememberHandler(getTelegramApiClient());
     }
 
     @Bean
-    public CurrencyRatesTrigger getCurrencyRatesTrigger() {
-        return new CurrencyRatesTrigger(getCurrencyRateSource(), getTelegramApiClient());
+    public CurrencyRatesHandler getCurrencyRatesHandler() {
+        return new CurrencyRatesHandler(getCurrencyRateSource(), getTelegramApiClient());
     }
 
     @Bean
@@ -89,12 +89,12 @@ public class SpringConfiguration {
     public SubscriptionManager getSubscriptionManager() {
         return new SubscriptionManager(
                 getRedisTemplate(),
-                getCurrencyRatesTrigger());
+                getCurrencyRatesHandler());
     }
 
     @Bean
-    public SubscriptionTrigger getSubscriptionTrigger() {
-        return new SubscriptionTrigger(getTelegramApiClient(), getSubscriptionManager());
+    public SubscriptionHandler getSubscriptionHandler() {
+        return new SubscriptionHandler(getTelegramApiClient(), getSubscriptionManager());
     }
 
 }

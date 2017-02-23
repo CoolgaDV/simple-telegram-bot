@@ -1,6 +1,6 @@
 package cdv.stb.subscription;
 
-import cdv.stb.common.TriggerWithSubscription;
+import cdv.stb.common.SubscriptionHandler;
 import org.junit.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -55,14 +55,14 @@ public class SubscriptionManagerTest {
         when(redisTemplateMock.opsForSet()).thenReturn(setOperationsMock);
         when(setOperationsMock.members("subscription:chat_ids")).thenReturn(chatIds);
 
-        TriggerWithSubscription trigger = mock(TriggerWithSubscription.class);
+        SubscriptionHandler handler = mock(SubscriptionHandler.class);
 
         SubscriptionManager subscriptionManager = new SubscriptionManager(
                 redisTemplateMock,
-                trigger);
+                handler);
 
         subscriptionManager.deliverToSubscribers();
-        verify(trigger).handleSubscriptionDelivery(42);
+        verify(handler).handleSubscription(42);
     }
 
 }

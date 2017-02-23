@@ -1,21 +1,21 @@
 package cdv.stb.subscription;
 
 import cdv.stb.telegram.TelegramApiClient;
-import cdv.stb.common.Trigger;
+import cdv.stb.common.MessageHandler;
 import cdv.stb.telegram.protocol.Message;
 
 /**
- * Trigger for subscription requests
+ * Handler for receiving subscription requests
  *
  * @author Dmitry Coolga
  *         19.02.2017 10:39
  */
-public class SubscriptionTrigger implements Trigger {
+public class SubscriptionHandler implements MessageHandler {
 
     private final TelegramApiClient apiClient;
     private final SubscriptionManager subscriptionManager;
 
-    public SubscriptionTrigger(TelegramApiClient apiClient,
+    public SubscriptionHandler(TelegramApiClient apiClient,
                                SubscriptionManager subscriptionManager) {
         this.apiClient = apiClient;
         this.subscriptionManager = subscriptionManager;
@@ -27,7 +27,7 @@ public class SubscriptionTrigger implements Trigger {
     }
 
     @Override
-    public void fire(Message message) {
+    public void handle(Message message) {
         long chatId = message.getChat().getId();
         boolean succeeded = subscriptionManager.registerSubscription(chatId);
         String text = succeeded ?

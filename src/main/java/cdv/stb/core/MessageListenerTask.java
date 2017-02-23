@@ -1,7 +1,7 @@
 package cdv.stb.core;
 
+import cdv.stb.common.MessageHandler;
 import cdv.stb.telegram.TelegramApiClient;
-import cdv.stb.common.Trigger;
 import cdv.stb.exception.MessageFormatException;
 import cdv.stb.exception.NetworkException;
 import cdv.stb.exception.RequestFailureException;
@@ -33,7 +33,7 @@ public class MessageListenerTask {
     private final AtomicLong updateCounter = new AtomicLong(0);
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
-    private final Trigger[] triggers;
+    private final MessageHandler[] handlers;
     private final TelegramApiClient apiClient;
 
     private final int networkFailurePauseMinutes;
@@ -46,12 +46,12 @@ public class MessageListenerTask {
                                int networkFailurePauseMinutes,
                                int requestFailureThreshold,
                                int pollingTimeoutSeconds,
-                               Trigger... triggers) {
+                               MessageHandler... handlers) {
         this.apiClient = apiClient;
         this.networkFailurePauseMinutes = networkFailurePauseMinutes;
         this.requestFailureThreshold = requestFailureThreshold;
         this.pollingTimeoutSeconds = pollingTimeoutSeconds;
-        this.triggers = triggers;
+        this.handlers = handlers;
 
     }
 
@@ -133,9 +133,9 @@ public class MessageListenerTask {
                     text,
                     message.getFrom().getUserName(),
                     message.getChat().getId());
-            for (Trigger trigger : triggers) {
-                if (trigger.match(message)) {
-                    trigger.fire(message);
+            for (MessageHandler handler : handlers) {
+                if (handler.match(message)) {
+                    handler.handle(message);
                 }
             }
         }

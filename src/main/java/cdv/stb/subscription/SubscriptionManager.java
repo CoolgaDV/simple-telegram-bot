@@ -1,6 +1,6 @@
 package cdv.stb.subscription;
 
-import cdv.stb.common.TriggerWithSubscription;
+import cdv.stb.common.SubscriptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * Component for subscriptions' persistence and sending messages for them by schedule
+ * Component for subscriptions' registration and sending messages for them by schedule
  *
  * @author Dmitry Coolga
  *         12.02.2017 21:37
@@ -22,12 +22,12 @@ public class SubscriptionManager {
     private static final Logger log = LoggerFactory.getLogger(SubscriptionManager.class);
 
     private final RedisTemplate<String, Long> redisTemplate;
-    private final TriggerWithSubscription[] triggers;
+    private final SubscriptionHandler[] handlers;
 
     public SubscriptionManager(RedisTemplate<String, Long> redisTemplate,
-                               TriggerWithSubscription... triggers) {
+                               SubscriptionHandler... handlers) {
         this.redisTemplate = redisTemplate;
-        this.triggers = triggers;
+        this.handlers = handlers;
     }
 
     public boolean registerSubscription(long chatId) {
@@ -46,7 +46,7 @@ public class SubscriptionManager {
         Set<Long> chatIds = redisTemplate.opsForSet().members(CHAT_ID_STORAGE);
         log.info("Sending messages by subscription for chats with IDs: {}", chatIds);
         for (Long id : chatIds) {
-            Arrays.stream(triggers).forEach(trigger -> trigger.handleSubscriptionDelivery(id));
+            Arrays.stream(handlers).forEach(handler -> handler.handleSubscription(id));
         }
     }
 

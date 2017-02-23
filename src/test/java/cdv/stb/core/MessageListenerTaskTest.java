@@ -1,6 +1,6 @@
 package cdv.stb.core;
 
-import cdv.stb.common.Trigger;
+import cdv.stb.common.MessageHandler;
 import cdv.stb.exception.RequestFailureException;
 import cdv.stb.telegram.TelegramApiClient;
 import cdv.stb.telegram.protocol.*;
@@ -61,7 +61,7 @@ public class MessageListenerTaskTest {
     }
 
     @Test
-    public void testTriggers() {
+    public void testHandlers() {
 
         Response response = new Response(
                 true,
@@ -72,19 +72,19 @@ public class MessageListenerTaskTest {
                 .thenReturn(response)
                 .thenThrow(terminate());
 
-        Trigger unmatchedTrigger = mock(Trigger.class);
-        when(unmatchedTrigger.match(any())).thenReturn(false);
+        MessageHandler unmatchedHandler = mock(MessageHandler.class);
+        when(unmatchedHandler.match(any())).thenReturn(false);
 
-        Trigger matchedTrigger = mock(Trigger.class);
-        when(matchedTrigger.match(any())).thenReturn(true);
+        MessageHandler matchedHandler = mock(MessageHandler.class);
+        when(matchedHandler.match(any())).thenReturn(true);
 
-        startTask(unmatchedTrigger, matchedTrigger);
+        startTask(unmatchedHandler, matchedHandler);
 
         verify(clientMock, times(3)).getUpdates(anyInt(), anyLong());
-        verify(unmatchedTrigger).match(any());
-        verify(unmatchedTrigger, never()).fire(any());
-        verify(matchedTrigger).match(any());
-        verify(matchedTrigger).fire(any());
+        verify(unmatchedHandler).match(any());
+        verify(unmatchedHandler, never()).handle(any());
+        verify(matchedHandler).match(any());
+        verify(matchedHandler).handle(any());
     }
 
     @Test
@@ -169,8 +169,8 @@ public class MessageListenerTaskTest {
                 offsetCaptor.capture());
     }
 
-    private void startTask(Trigger... triggers) {
-        new MessageListenerTask(clientMock, 1, 2, 5, triggers).start();
+    private void startTask(MessageHandler... handlers) {
+        new MessageListenerTask(clientMock, 1, 2, 5, handlers).start();
     }
 
     private RuntimeException terminate() {

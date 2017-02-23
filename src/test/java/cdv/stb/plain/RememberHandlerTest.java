@@ -1,6 +1,5 @@
 package cdv.stb.plain;
 
-import cdv.stb.plain.RememberTrigger;
 import cdv.stb.telegram.protocol.Chat;
 import cdv.stb.telegram.protocol.Message;
 import cdv.stb.telegram.TelegramApiClient;
@@ -15,23 +14,23 @@ import static org.mockito.Mockito.verify;
  * @author Dmitry Coolga
  *         05.02.2017 11:35
  */
-public class RememberTriggerTest {
+public class RememberHandlerTest {
 
     private final TelegramApiClient clientMock = mock(TelegramApiClient.class);
-    private final RememberTrigger trigger = new RememberTrigger(clientMock);
+    private final RememberHandler handler = new RememberHandler(clientMock);
 
     @Test
     public void testMatch() {
-        assertTrue(trigger.match(new Message(0, null, null, 0, "Помнишь")));
-        assertTrue(trigger.match(new Message(0, null, null, 0, "Помнишь?")));
+        assertTrue(handler.match(new Message(0, null, null, 0, "Помнишь")));
+        assertTrue(handler.match(new Message(0, null, null, 0, "Помнишь?")));
     }
 
     @Test
     public void testNotMatch() {
-        assertFalse(trigger.match(new Message(0, null, null, 0, null)));
-        assertFalse(trigger.match(new Message(0, null, null, 0, "")));
-        assertFalse(trigger.match(new Message(0, null, null, 0, " Помнишь")));
-        assertFalse(trigger.match(new Message(0, null, null, 0, "ПОМНИШЬ")));
+        assertFalse(handler.match(new Message(0, null, null, 0, null)));
+        assertFalse(handler.match(new Message(0, null, null, 0, "")));
+        assertFalse(handler.match(new Message(0, null, null, 0, " Помнишь")));
+        assertFalse(handler.match(new Message(0, null, null, 0, "ПОМНИШЬ")));
     }
 
     @Test
@@ -39,7 +38,7 @@ public class RememberTriggerTest {
 
         Chat chat = new Chat(42, null, null, null, null);
         Message message = new Message(0, null, chat, 0, null);
-        trigger.fire(message);
+        handler.handle(message);
 
         verify(clientMock).sendMessage("Помню !", 42);
     }

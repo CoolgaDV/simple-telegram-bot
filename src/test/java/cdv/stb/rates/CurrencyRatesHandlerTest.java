@@ -17,24 +17,24 @@ import static org.mockito.Mockito.when;
  * @author Dmitry Coolga
  *         05.02.2017 11:20
  */
-public class CurrencyRatesTriggerTest {
+public class CurrencyRatesHandlerTest {
 
     private final TelegramApiClient clientMock = mock(TelegramApiClient.class);
     private final CurrencyRateSource rateSourceMock = mock(CurrencyRateSource.class);
     
     @Test
     public void testMatch() {
-        CurrencyRatesTrigger trigger = new CurrencyRatesTrigger(rateSourceMock, clientMock);
-        assertTrue(trigger.match(new Message(0, null, null, 0, "Курс валют")));
+        CurrencyRatesHandler handler = new CurrencyRatesHandler(rateSourceMock, clientMock);
+        assertTrue(handler.match(new Message(0, null, null, 0, "Курс валют")));
     }
 
     @Test
     public void testNotMatch() {
-        CurrencyRatesTrigger trigger = new CurrencyRatesTrigger(rateSourceMock, clientMock);
-        assertFalse(trigger.match(new Message(0, null, null, 0, null)));
-        assertFalse(trigger.match(new Message(0, null, null, 0, "")));
-        assertFalse(trigger.match(new Message(0, null, null, 0, "Курс валют !")));
-        assertFalse(trigger.match(new Message(0, null, null, 0, "КУРС ВАЛЮТ")));
+        CurrencyRatesHandler handler = new CurrencyRatesHandler(rateSourceMock, clientMock);
+        assertFalse(handler.match(new Message(0, null, null, 0, null)));
+        assertFalse(handler.match(new Message(0, null, null, 0, "")));
+        assertFalse(handler.match(new Message(0, null, null, 0, "Курс валют !")));
+        assertFalse(handler.match(new Message(0, null, null, 0, "КУРС ВАЛЮТ")));
     }
 
     @Test
@@ -42,10 +42,10 @@ public class CurrencyRatesTriggerTest {
 
         when(rateSourceMock.getCurrentRates()).thenReturn(Collections.emptyList());
 
-        CurrencyRatesTrigger trigger = new CurrencyRatesTrigger(rateSourceMock, clientMock);
+        CurrencyRatesHandler handler = new CurrencyRatesHandler(rateSourceMock, clientMock);
         Chat chat = new Chat(42, null, null, null, null);
         Message message = new Message(0, null, chat, 0, null);
-        trigger.fire(message);
+        handler.handle(message);
 
         verify(clientMock).sendMessage("Данные по курсам валют недоступны...", 42);
     }
@@ -57,10 +57,10 @@ public class CurrencyRatesTriggerTest {
                 new CurrencyRate("USDRUB", "1.0", null, null),
                 new CurrencyRate("EURRUB", "2.0", null, null)));
 
-        CurrencyRatesTrigger trigger = new CurrencyRatesTrigger(rateSourceMock, clientMock);
+        CurrencyRatesHandler handler = new CurrencyRatesHandler(rateSourceMock, clientMock);
         Chat chat = new Chat(42, null, null, null, null);
         Message message = new Message(0, null, chat, 0, null);
-        trigger.fire(message);
+        handler.handle(message);
 
         verify(clientMock).sendMessage("Доллар: 1.0\nЕвро: 2.0", 42);
     }

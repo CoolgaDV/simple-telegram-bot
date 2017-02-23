@@ -1,24 +1,24 @@
 package cdv.stb.plain;
 
+import cdv.stb.common.MessageHandler;
 import cdv.stb.telegram.TelegramApiClient;
-import cdv.stb.common.Trigger;
 import cdv.stb.telegram.protocol.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple trigger sends remember acknowledgement message.
+ * Simple handler for sending remember acknowledgement messages.
  *
  * @author Dmitry Coolga
  *         05.02.2017 11:07
  */
-public class RememberTrigger implements Trigger {
+public class RememberHandler implements MessageHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RememberTrigger.class);
+    private static final Logger log = LoggerFactory.getLogger(RememberHandler.class);
 
     private final TelegramApiClient apiClient;
 
-    public RememberTrigger(TelegramApiClient apiClient) {
+    public RememberHandler(TelegramApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -29,7 +29,7 @@ public class RememberTrigger implements Trigger {
     }
 
     @Override
-    public void fire(Message message) {
+    public void handle(Message message) {
         String output = apiClient.sendMessage(
                 "Помню !",
                 message.getChat().getId());
