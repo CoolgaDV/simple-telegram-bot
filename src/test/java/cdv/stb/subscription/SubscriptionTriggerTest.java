@@ -1,7 +1,10 @@
-package cdv.stb;
+package cdv.stb.subscription;
 
-import cdv.stb.protocol.Chat;
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.protocol.Chat;
+import cdv.stb.telegram.protocol.Message;
+import cdv.stb.subscription.SubscriptionManager;
+import cdv.stb.subscription.SubscriptionTrigger;
+import cdv.stb.telegram.TelegramApiClient;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,7 +1,9 @@
-package cdv.stb;
+package cdv.stb.plain;
 
-import cdv.stb.protocol.Chat;
-import cdv.stb.protocol.Message;
+import cdv.stb.plain.RememberTrigger;
+import cdv.stb.telegram.protocol.Chat;
+import cdv.stb.telegram.protocol.Message;
+import cdv.stb.telegram.TelegramApiClient;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

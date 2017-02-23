@@ -1,6 +1,8 @@
-package cdv.stb;
+package cdv.stb.plain;
 
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.common.Trigger;
+import cdv.stb.telegram.protocol.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

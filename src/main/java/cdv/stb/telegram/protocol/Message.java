@@ -1,4 +1,4 @@
-package cdv.stb.protocol;
+package cdv.stb.telegram.protocol;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

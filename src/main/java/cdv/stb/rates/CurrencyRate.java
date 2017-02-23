@@ -6,7 +6,7 @@ package cdv.stb.rates;
  * @author Dmitry Coolga
  *         05.02.2017 10:20
  */
-public class CurrencyRate {
+class CurrencyRate {
 
     private final String pair;
     private final String ratio;
@@ -20,19 +20,19 @@ public class CurrencyRate {
         this.time = time;
     }
 
-    public String getPair() {
+    String getPair() {
         return pair;
     }
 
-    public String getRatio() {
+    String getRatio() {
         return ratio;
     }
 
-    public String getDate() {
+    String getDate() {
         return date;
     }
 
-    public String getTime() {
+    String getTime() {
         return time;
     }
 

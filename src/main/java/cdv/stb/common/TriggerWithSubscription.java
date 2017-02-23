@@ -1,4 +1,4 @@
-package cdv.stb;
+package cdv.stb.common;
 
 /**
  * Interface for triggers with subscription support

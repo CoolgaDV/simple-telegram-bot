@@ -1,7 +1,11 @@
-package cdv.stb;
+package cdv.stb.core;
 
+import cdv.stb.plain.RememberTrigger;
 import cdv.stb.rates.CurrencyRateSource;
 import cdv.stb.rates.CurrencyRatesTrigger;
+import cdv.stb.subscription.SubscriptionManager;
+import cdv.stb.subscription.SubscriptionTrigger;
+import cdv.stb.telegram.TelegramApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

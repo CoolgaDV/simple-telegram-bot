@@ -1,8 +1,8 @@
 package cdv.stb.rates;
 
-import cdv.stb.TelegramApiClient;
-import cdv.stb.protocol.Chat;
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.telegram.protocol.Chat;
+import cdv.stb.telegram.protocol.Message;
 import org.junit.Test;
 
 import java.util.Arrays;

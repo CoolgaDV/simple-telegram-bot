@@ -1,4 +1,4 @@
-package cdv.stb;
+package cdv.stb.core;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

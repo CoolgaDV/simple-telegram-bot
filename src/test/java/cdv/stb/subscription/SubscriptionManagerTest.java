@@ -1,5 +1,6 @@
-package cdv.stb;
+package cdv.stb.subscription;
 
+import cdv.stb.common.TriggerWithSubscription;
 import org.junit.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -18,10 +19,10 @@ import static org.mockito.Mockito.*;
 public class SubscriptionManagerTest {
 
     @SuppressWarnings("unchecked")
-    private RedisTemplate<String, Long> redisTemplateMock = mock(RedisTemplate.class);
+    private final RedisTemplate<String, Long> redisTemplateMock = mock(RedisTemplate.class);
 
     @SuppressWarnings("unchecked")
-    private SetOperations<String, Long> setOperationsMock = mock(SetOperations.class);
+    private final SetOperations<String, Long> setOperationsMock = mock(SetOperations.class);
 
     @Test
     public void registerSubscriptionSuccessfully() {

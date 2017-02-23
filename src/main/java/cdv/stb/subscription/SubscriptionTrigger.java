@@ -1,6 +1,8 @@
-package cdv.stb;
+package cdv.stb.subscription;
 
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.common.Trigger;
+import cdv.stb.telegram.protocol.Message;
 
 /**
  * Trigger for subscription requests

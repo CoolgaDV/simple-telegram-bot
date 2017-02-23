@@ -1,7 +1,9 @@
-package cdv.stb;
+package cdv.stb.core;
 
+import cdv.stb.common.Trigger;
 import cdv.stb.exception.RequestFailureException;
-import cdv.stb.protocol.*;
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.telegram.protocol.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,9 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
 
 /**

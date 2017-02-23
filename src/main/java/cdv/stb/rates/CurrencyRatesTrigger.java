@@ -1,9 +1,9 @@
 package cdv.stb.rates;
 
-import cdv.stb.TelegramApiClient;
-import cdv.stb.Trigger;
-import cdv.stb.TriggerWithSubscription;
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.common.Trigger;
+import cdv.stb.common.TriggerWithSubscription;
+import cdv.stb.telegram.protocol.Message;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class CurrencyRatesTrigger implements Trigger, TriggerWithSubscription {
                 .filter(rate -> currencyPair.equals(rate.getPair()))
                 .map(rate -> localizedCurrencyPairName + ": " + rate.getRatio())
                 .findAny()
-                .get();
+                .orElse("данные не доступны");
     }
 
 }

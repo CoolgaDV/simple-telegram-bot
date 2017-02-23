@@ -1,6 +1,6 @@
-package cdv.stb;
+package cdv.stb.common;
 
-import cdv.stb.protocol.Message;
+import cdv.stb.telegram.protocol.Message;
 
 /**
  * Message trigger. If messages is matched it fires some action.

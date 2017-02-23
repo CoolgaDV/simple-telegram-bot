@@ -1,9 +1,9 @@
-package cdv.stb;
+package cdv.stb.telegram;
 
 import cdv.stb.exception.MessageFormatException;
 import cdv.stb.exception.NetworkException;
 import cdv.stb.exception.RequestFailureException;
-import cdv.stb.protocol.Response;
+import cdv.stb.telegram.protocol.Response;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;

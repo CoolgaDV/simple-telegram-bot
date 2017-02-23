@@ -1,11 +1,13 @@
-package cdv.stb;
+package cdv.stb.core;
 
+import cdv.stb.telegram.TelegramApiClient;
+import cdv.stb.common.Trigger;
 import cdv.stb.exception.MessageFormatException;
 import cdv.stb.exception.NetworkException;
 import cdv.stb.exception.RequestFailureException;
-import cdv.stb.protocol.Message;
-import cdv.stb.protocol.Response;
-import cdv.stb.protocol.Result;
+import cdv.stb.telegram.protocol.Message;
+import cdv.stb.telegram.protocol.Response;
+import cdv.stb.telegram.protocol.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
