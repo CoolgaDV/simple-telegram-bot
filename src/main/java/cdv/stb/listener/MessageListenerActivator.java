@@ -1,4 +1,4 @@
-package cdv.stb.core;
+package cdv.stb.listener;
 
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

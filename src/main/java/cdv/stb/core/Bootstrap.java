@@ -14,9 +14,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *         14.01.2017 11:00
  */
 @EnableAutoConfiguration
-@Import(SpringConfiguration.class)
 @EnableAsync
 @EnableScheduling
+@Import({ LogicConfiguration.class, ServiceConfiguration.class })
 public class Bootstrap {
 
     public static void main(String[] args) {

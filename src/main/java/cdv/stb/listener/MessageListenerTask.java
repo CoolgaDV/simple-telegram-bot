@@ -1,4 +1,4 @@
-package cdv.stb.core;
+package cdv.stb.listener;
 
 import cdv.stb.common.MessageHandler;
 import cdv.stb.telegram.TelegramApiClient;

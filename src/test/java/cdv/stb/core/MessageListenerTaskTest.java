@@ -2,6 +2,7 @@ package cdv.stb.core;
 
 import cdv.stb.common.MessageHandler;
 import cdv.stb.exception.RequestFailureException;
+import cdv.stb.listener.MessageListenerTask;
 import cdv.stb.telegram.TelegramApiClient;
 import cdv.stb.telegram.protocol.*;
 import org.junit.Assert;
