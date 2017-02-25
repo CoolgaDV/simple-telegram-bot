@@ -39,11 +39,17 @@ public class CurrencyRateSource {
 
     private volatile List<CurrencyRate> currentRates = Collections.emptyList();
 
+    private final RestTemplate restTemplate;
+
+    public CurrencyRateSource(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @PostConstruct
     @Scheduled(cron = "${app.rates.refresh.cron}")
     public void refresh() {
         try {
-            ResponseEntity<String> response = new RestTemplate().getForEntity(
+            ResponseEntity<String> response = restTemplate.getForEntity(
                     UriComponentsBuilder.fromHttpUrl(RATES_QUERY).build().encode().toUri(),
                     String.class);
             Document xml = DocumentBuilderFactory.newInstance()

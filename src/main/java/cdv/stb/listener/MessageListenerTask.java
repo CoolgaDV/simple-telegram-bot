@@ -66,6 +66,7 @@ public class MessageListenerTask {
     public void start() {
         log.info("Listener task started");
         if ( ! skipStaleUpdates()) {
+            shutdownLatch.countDown();
             return;
         }
         int failureCounter = 0;

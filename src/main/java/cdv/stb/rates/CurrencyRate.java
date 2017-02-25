@@ -6,7 +6,7 @@ package cdv.stb.rates;
  * @author Dmitry Coolga
  *         05.02.2017 10:20
  */
-class CurrencyRate {
+public class CurrencyRate {
 
     private final String pair;
     private final String ratio;

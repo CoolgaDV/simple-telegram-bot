@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" yahoo:count="2"
+       yahoo:created="2017-02-25T06:36:08Z" yahoo:lang="ru-RU">
+    <results>
+        <rate id="USDRUB">
+            <Name>USD/RUB</Name>
+            <Rate>30.0000</Rate>
+            <Date>1/12/2020</Date>
+            <Time>10:01pm</Time>
+            <Ask>30.0000</Ask>
+            <Bid>30.0000</Bid>
+        </rate>
+        <rate id="EURRUB">
+            <Name>EUR/RUB</Name>
+            <Rate>40.0000</Rate>
+            <Date>1/12/2020</Date>
+            <Time>10:01pm</Time>
+            <Ask>40.0000</Ask>
+            <Bid>40.0000</Bid>
+        </rate>
+    </results>
+</query>

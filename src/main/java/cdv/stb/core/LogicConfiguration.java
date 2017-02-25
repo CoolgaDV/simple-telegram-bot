@@ -9,8 +9,11 @@ import cdv.stb.subscription.SubscriptionHandler;
 import cdv.stb.subscription.SubscriptionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Spring configuration for application logic
@@ -19,6 +22,9 @@ import org.springframework.context.annotation.Configuration;
  *         23.02.2017 16:20
  */
 @Configuration
+@EnableAsync
+@EnableScheduling
+@EnableAutoConfiguration
 public class LogicConfiguration {
 
     @Value("${app.polling.timeout.seconds}")
@@ -56,7 +62,7 @@ public class LogicConfiguration {
 
     @Bean
     public CurrencyRateSource getCurrencyRateSource() {
-        return new CurrencyRateSource();
+        return new CurrencyRateSource(serviceConfig.getRestTemplate());
     }
 
     @Bean

@@ -2,7 +2,7 @@
 
 app:
 
-  bot.token: {{ bot_token }}
+  bot.token: abc123
 
   polling.timeout.seconds: 10
   network.failure.pause.minutes: 5
@@ -21,3 +21,8 @@ app:
 spring:
 
     main.banner-mode: "off"
+
+
+logging.level:
+
+    ROOT: ERROR

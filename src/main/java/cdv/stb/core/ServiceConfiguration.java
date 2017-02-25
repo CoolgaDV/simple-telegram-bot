@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Spring configuration for auxiliary service beans
@@ -33,7 +34,12 @@ public class ServiceConfiguration {
 
     @Bean
     public TelegramApiClient getTelegramApiClient() {
-        return new TelegramApiClient(botToken);
+        return new TelegramApiClient(botToken, getRestTemplate());
+    }
+
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
     }
 
     @Bean

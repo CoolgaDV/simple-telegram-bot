@@ -14,18 +14,21 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
+ * Client for integration with Telegram bot API
+ *
  * @author Dmitry Coolga
  *         19.01.2017 07:49
  */
 public class TelegramApiClient {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private final RestTemplate rest = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     private final String token;
 
-    public TelegramApiClient(String token) {
+    public TelegramApiClient(String token, RestTemplate restTemplate) {
         this.token = token;
+        this.restTemplate = restTemplate;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -48,7 +51,7 @@ public class TelegramApiClient {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                     "https://api.telegram.org/bot" + token + "/" + method);
             urlCustomizer.accept(builder);
-            ResponseEntity<String> response = rest.getForEntity(
+            ResponseEntity<String> response = restTemplate.getForEntity(
                     builder.build().encode().toUri(),
                     String.class);
             return response.getBody();
